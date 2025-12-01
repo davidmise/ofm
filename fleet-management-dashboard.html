@@ -1,0 +1,1253 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Fleet Management System - Data Analysis & Recommendations</title>
+    
+    <!-- Bootstrap 5 CSS -->
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.min.css" rel="stylesheet">
+    <!-- Bootstrap Icons -->
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.1/font/bootstrap-icons.css">
+    <!-- Google Fonts -->
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&display=swap" rel="stylesheet">
+    
+    <style>
+        :root {
+            --primary-gradient: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            --success-gradient: linear-gradient(135deg, #11998e 0%, #38ef7d 100%);
+            --warning-gradient: linear-gradient(135deg, #f093fb 0%, #f5576c 100%);
+            --info-gradient: linear-gradient(135deg, #4facfe 0%, #00f2fe 100%);
+            --dark-bg: #0f0f1e;
+            --card-bg: #1a1a2e;
+            --card-hover: #25254a;
+        }
+        
+        * {
+            font-family: 'Inter', sans-serif;
+        }
+        
+        body {
+            background: linear-gradient(135deg, #0f0f1e 0%, #1a1a2e 100%);
+            color: #e0e0e0;
+            min-height: 100vh;
+            padding-bottom: 50px;
+        }
+        
+        .navbar {
+            background: rgba(26, 26, 46, 0.95) !important;
+            backdrop-filter: blur(10px);
+            box-shadow: 0 4px 30px rgba(0, 0, 0, 0.3);
+        }
+        
+        .navbar-brand {
+            font-weight: 700;
+            font-size: 1.5rem;
+            background: var(--primary-gradient);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+        }
+        
+        .hero-section {
+            padding: 80px 0 60px;
+            background: var(--primary-gradient);
+            position: relative;
+            overflow: hidden;
+        }
+        
+        .hero-section::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            background: url('data:image/svg+xml,<svg width="100" height="100" xmlns="http://www.w3.org/2000/svg"><circle cx="50" cy="50" r="2" fill="white" opacity="0.1"/></svg>');
+            opacity: 0.3;
+        }
+        
+        .hero-content {
+            position: relative;
+            z-index: 1;
+        }
+        
+        .hero-title {
+            font-size: 3.5rem;
+            font-weight: 800;
+            color: white;
+            text-shadow: 2px 2px 20px rgba(0, 0, 0, 0.3);
+        }
+        
+        .hero-subtitle {
+            font-size: 1.3rem;
+            color: rgba(255, 255, 255, 0.9);
+            font-weight: 400;
+        }
+        
+        .stat-card {
+            background: var(--card-bg);
+            border-radius: 20px;
+            padding: 30px;
+            transition: all 0.3s ease;
+            border: 1px solid rgba(255, 255, 255, 0.1);
+            height: 100%;
+            position: relative;
+            overflow: hidden;
+        }
+        
+        .stat-card::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+            height: 4px;
+            background: var(--primary-gradient);
+        }
+        
+        .stat-card:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 10px 40px rgba(102, 126, 234, 0.3);
+            background: var(--card-hover);
+        }
+        
+        .stat-icon {
+            width: 60px;
+            height: 60px;
+            border-radius: 15px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 28px;
+            margin-bottom: 20px;
+            background: var(--primary-gradient);
+            color: white;
+        }
+        
+        .stat-value {
+            font-size: 2.5rem;
+            font-weight: 700;
+            background: var(--primary-gradient);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+        }
+        
+        .stat-label {
+            color: #b8bfc9;
+            font-size: 0.95rem;
+            font-weight: 500;
+            text-transform: uppercase;
+            letter-spacing: 1px;
+        }
+        
+        .feature-card {
+            background: var(--card-bg);
+            border-radius: 20px;
+            padding: 35px;
+            transition: all 0.3s ease;
+            border: 1px solid rgba(255, 255, 255, 0.1);
+            height: 100%;
+        }
+        
+        .feature-card:hover {
+            transform: translateY(-8px);
+            box-shadow: 0 15px 50px rgba(56, 239, 125, 0.2);
+            border-color: rgba(56, 239, 125, 0.3);
+        }
+        
+        .feature-icon {
+            width: 70px;
+            height: 70px;
+            border-radius: 18px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 32px;
+            margin-bottom: 25px;
+        }
+        
+        .feature-icon.success {
+            background: var(--success-gradient);
+            color: white;
+        }
+        
+        .feature-icon.warning {
+            background: var(--warning-gradient);
+            color: white;
+        }
+        
+        .feature-icon.info {
+            background: var(--info-gradient);
+            color: white;
+        }
+        
+        .feature-title {
+            font-size: 1.4rem;
+            font-weight: 700;
+            color: white;
+            margin-bottom: 15px;
+        }
+        
+        .feature-desc {
+            color: #b8bfc9;
+            line-height: 1.7;
+            font-size: 0.95rem;
+        }
+        
+        .section-title {
+            font-size: 2.5rem;
+            font-weight: 800;
+            margin-bottom: 15px;
+            background: var(--primary-gradient);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+        }
+        
+        .section-subtitle {
+            color: #c1c7d0;
+            font-size: 1.1rem;
+            margin-bottom: 50px;
+        }
+        
+        .data-table {
+            background: var(--card-bg);
+            border-radius: 20px;
+            padding: 30px;
+            border: 1px solid rgba(255, 255, 255, 0.1);
+            overflow-x: auto;
+        }
+        
+        .table {
+            color: #e0e0e0;
+        }
+        
+        .table thead th {
+            background: var(--primary-gradient);
+            color: white;
+            border: none;
+            font-weight: 600;
+            text-transform: uppercase;
+            font-size: 0.85rem;
+            letter-spacing: 0.5px;
+            padding: 15px;
+        }
+        
+        .table tbody tr {
+            border-bottom: 1px solid rgba(255, 255, 255, 0.05);
+            transition: all 0.2s ease;
+        }
+        
+        .table tbody tr:hover {
+            background: rgba(102, 126, 234, 0.1);
+        }
+        
+        .table tbody td {
+            padding: 15px;
+            vertical-align: middle;
+            border: none;
+        }
+        
+        .badge-custom {
+            padding: 8px 16px;
+            border-radius: 8px;
+            font-weight: 600;
+            font-size: 0.85rem;
+        }
+        
+        .badge-export {
+            background: linear-gradient(135deg, #f093fb 0%, #f5576c 100%);
+            color: white;
+        }
+        
+        .badge-import {
+            background: linear-gradient(135deg, #4facfe 0%, #00f2fe 100%);
+            color: white;
+        }
+        
+        .recommendation-card {
+            background: var(--card-bg);
+            border-left: 4px solid;
+            border-radius: 15px;
+            padding: 25px;
+            margin-bottom: 20px;
+            transition: all 0.3s ease;
+        }
+        
+        .recommendation-card:hover {
+            transform: translateX(10px);
+            box-shadow: 0 5px 30px rgba(0, 0, 0, 0.3);
+        }
+        
+        .recommendation-card.high-priority {
+            border-color: #f5576c;
+            background: linear-gradient(to right, rgba(245, 87, 108, 0.1) 0%, var(--card-bg) 100%);
+        }
+        
+        .recommendation-card.medium-priority {
+            border-color: #38ef7d;
+            background: linear-gradient(to right, rgba(56, 239, 125, 0.1) 0%, var(--card-bg) 100%);
+        }
+        
+        .recommendation-card.info-priority {
+            border-color: #4facfe;
+            background: linear-gradient(to right, rgba(79, 172, 254, 0.1) 0%, var(--card-bg) 100%);
+        }
+        
+        .priority-badge {
+            display: inline-block;
+            padding: 5px 12px;
+            border-radius: 20px;
+            font-size: 0.75rem;
+            font-weight: 700;
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+        }
+        
+        .priority-high {
+            background: #f5576c;
+            color: white;
+        }
+        
+        .priority-medium {
+            background: #38ef7d;
+            color: white;
+        }
+        
+        .priority-info {
+            background: #4facfe;
+            color: white;
+        }
+        
+        .btn-custom {
+            padding: 14px 35px;
+            border-radius: 12px;
+            font-weight: 600;
+            font-size: 1rem;
+            border: none;
+            transition: all 0.3s ease;
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+        }
+        
+        .btn-primary-gradient {
+            background: var(--primary-gradient);
+            color: white;
+        }
+        
+        .btn-primary-gradient:hover {
+            transform: translateY(-3px);
+            box-shadow: 0 10px 30px rgba(102, 126, 234, 0.4);
+            color: white;
+        }
+        
+        .btn-success-gradient {
+            background: var(--success-gradient);
+            color: white;
+        }
+        
+        .btn-success-gradient:hover {
+            transform: translateY(-3px);
+            box-shadow: 0 10px 30px rgba(56, 239, 125, 0.4);
+            color: white;
+        }
+        
+        .chart-placeholder {
+            background: var(--card-bg);
+            border-radius: 20px;
+            padding: 40px;
+            border: 1px solid rgba(255, 255, 255, 0.1);
+            min-height: 300px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            position: relative;
+            overflow: hidden;
+        }
+        
+        .chart-placeholder::before {
+            content: '';
+            position: absolute;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+            width: 200px;
+            height: 200px;
+            background: var(--primary-gradient);
+            border-radius: 50%;
+            opacity: 0.1;
+            animation: pulse 3s infinite;
+        }
+        
+        @keyframes pulse {
+            0%, 100% { transform: translate(-50%, -50%) scale(1); }
+            50% { transform: translate(-50%, -50%) scale(1.1); }
+        }
+        
+        .chart-content {
+            text-align: center;
+            position: relative;
+            z-index: 1;
+        }
+        
+        .chart-content p {
+            color: #b0b5c0 !important;
+            font-size: 1rem;
+        }
+        
+        .chart-icon {
+            font-size: 4rem;
+            background: var(--primary-gradient);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+            margin-bottom: 15px;
+        }
+        
+        .list-custom {
+            list-style: none;
+            padding-left: 0;
+        }
+        
+        .list-custom li {
+            padding: 12px 0;
+            padding-left: 35px;
+            position: relative;
+            color: #d1d5db;
+            line-height: 1.7;
+        }
+        
+        .list-custom li::before {
+            content: '✓';
+            position: absolute;
+            left: 0;
+            top: 12px;
+            width: 24px;
+            height: 24px;
+            background: var(--success-gradient);
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-weight: 700;
+            font-size: 0.85rem;
+            color: white;
+        }
+        
+        /* Additional text visibility improvements */
+        .text-muted {
+            color: #b8bfc9 !important;
+        }
+        
+        p.text-muted {
+            color: #b8bfc9 !important;
+        }
+        
+        .footer {
+            background: var(--card-bg);
+            padding: 30px 0;
+            margin-top: 80px;
+            border-top: 1px solid rgba(255, 255, 255, 0.1);
+        }
+        
+        .animated-gradient-bg {
+            background: linear-gradient(45deg, #667eea, #764ba2, #f093fb, #667eea);
+            background-size: 400% 400%;
+            animation: gradientShift 15s ease infinite;
+        }
+        
+        @keyframes gradientShift {
+            0% { background-position: 0% 50%; }
+            50% { background-position: 100% 50%; }
+            100% { background-position: 0% 50%; }
+        }
+        
+        .scroll-fade-in {
+            opacity: 0;
+            transform: translateY(30px);
+            transition: all 0.6s ease-out;
+        }
+        
+        .scroll-fade-in.visible {
+            opacity: 1;
+            transform: translateY(0);
+        }
+    </style>
+</head>
+<body>
+    <!-- Navigation -->
+    <nav class="navbar navbar-expand-lg navbar-dark sticky-top">
+        <div class="container">
+            <a class="navbar-brand" href="#">
+                <i class="bi bi-truck me-2"></i>Fleet Management Pro
+            </a>
+            <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNav">
+                <span class="navbar-toggler-icon"></span>
+            </button>
+            <div class="collapse navbar-collapse" id="navbarNav">
+                <ul class="navbar-nav ms-auto">
+                    <li class="nav-item">
+                        <a class="nav-link" href="#overview">Overview</a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link" href="#data-insights">Data Insights</a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link" href="#features">Features</a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link" href="#recommendations">Recommendations</a>
+                    </li>
+                </ul>
+            </div>
+        </div>
+    </nav>
+
+    <!-- Hero Section -->
+    <div class="hero-section animated-gradient-bg">
+        <div class="container hero-content text-center">
+            <div class="scroll-fade-in visible">
+                <h1 class="hero-title mb-3">Fleet Management Data Analysis</h1>
+                <p class="hero-subtitle mb-4">Transform Your Operations with Intelligent Fleet Tracking</p>
+                <div class="d-flex gap-3 justify-content-center">
+                    <a href="#recommendations" class="btn btn-light btn-custom">View Recommendations</a>
+                    <a href="#data-insights" class="btn btn-outline-light btn-custom">Explore Data</a>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Statistics Overview -->
+    <div class="container mt-5" id="overview">
+        <div class="row g-4">
+            <div class="col-md-3 col-sm-6">
+                <div class="stat-card scroll-fade-in">
+                    <div class="stat-icon">
+                        <i class="bi bi-file-earmark-spreadsheet"></i>
+                    </div>
+                    <div class="stat-value">629</div>
+                    <div class="stat-label">Total Records</div>
+                </div>
+            </div>
+            <div class="col-md-3 col-sm-6">
+                <div class="stat-card scroll-fade-in">
+                    <div class="stat-icon">
+                        <i class="bi bi-columns-gap"></i>
+                    </div>
+                    <div class="stat-value">21+</div>
+                    <div class="stat-label">Data Columns</div>
+                </div>
+            </div>
+            <div class="col-md-3 col-sm-6">
+                <div class="stat-card scroll-fade-in">
+                    <div class="stat-icon">
+                        <i class="bi bi-calendar-range"></i>
+                    </div>
+                    <div class="stat-value">14</div>
+                    <div class="stat-label">Days Tracked</div>
+                </div>
+            </div>
+            <div class="col-md-3 col-sm-6">
+                <div class="stat-card scroll-fade-in">
+                    <div class="stat-icon">
+                        <i class="bi bi-truck"></i>
+                    </div>
+                    <div class="stat-value">500+</div>
+                    <div class="stat-label">Fleet Vehicles</div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Data Structure Section -->
+    <div class="container mt-5 pt-5" id="data-insights">
+        <div class="text-center mb-5 scroll-fade-in">
+            <h2 class="section-title">Data Structure & Parameters</h2>
+            <p class="section-subtitle">Understanding your fleet tracking data schema</p>
+        </div>
+
+        <div class="row g-4 mb-5">
+            <div class="col-lg-6">
+                <div class="data-table scroll-fade-in">
+                    <h4 class="text-white mb-4"><i class="bi bi-layout-text-sidebar me-2"></i>Core Data Fields</h4>
+                    <table class="table table-sm">
+                        <thead>
+                            <tr>
+                                <th>Field Name</th>
+                                <th>Description</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            <tr>
+                                <td><strong>TRUCK OWNER</strong></td>
+                                <td>Company owning the vehicle (e.g., EACL)</td>
+                            </tr>
+                            <tr>
+                                <td><strong>S/NO</strong></td>
+                                <td>Serial/Reference number</td>
+                            </tr>
+                            <tr>
+                                <td><strong>TRUCKS</strong></td>
+                                <td>Vehicle registration number</td>
+                            </tr>
+                            <tr>
+                                <td><strong>TRAILER 1</strong></td>
+                                <td>Trailer registration number(s)</td>
+                            </tr>
+                            <tr>
+                                <td><strong>DRIVER NAME</strong></td>
+                                <td>Assigned driver full name</td>
+                            </tr>
+                            <tr>
+                                <td><strong>TYPE</strong></td>
+                                <td>Operation type (Import/Export)</td>
+                            </tr>
+                            <tr>
+                                <td><strong>CLIENT</strong></td>
+                                <td>Customer/Client name</td>
+                            </tr>
+                            <tr>
+                                <td><strong>DESTINATION</strong></td>
+                                <td>Target delivery location</td>
+                            </tr>
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+
+            <div class="col-lg-6">
+                <div class="data-table scroll-fade-in">
+                    <h4 class="text-white mb-4"><i class="bi bi-calendar-week me-2"></i>Time-Series Tracking</h4>
+                    <table class="table table-sm">
+                        <thead>
+                            <tr>
+                                <th>Date Range</th>
+                                <th>Information</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            <tr>
+                                <td><strong>Nov 15-28, 2025</strong></td>
+                                <td>Daily status updates at 12:30 PM</td>
+                            </tr>
+                            <tr>
+                                <td colspan="2" class="pt-3">
+                                    <strong class="d-block mb-2">Status Information Includes:</strong>
+                                    <ul class="list-custom mb-0">
+                                        <li>Current location</li>
+                                        <li>Transit status (en route, loaded, waiting)</li>
+                                        <li>Day count in journey</li>
+                                        <li>Border crossing status</li>
+                                        <li>Loading/unloading status</li>
+                                    </ul>
+                                </td>
+                            </tr>
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+        </div>
+
+        <!-- Sample Data Preview -->
+        <div class="data-table scroll-fade-in">
+            <h4 class="text-white mb-4"><i class="bi bi-table me-2"></i>Sample Data Preview</h4>
+            <div class="table-responsive">
+                <table class="table">
+                    <thead>
+                        <tr>
+                            <th>Owner</th>
+                            <th>S/NO</th>
+                            <th>Truck</th>
+                            <th>Driver</th>
+                            <th>Type</th>
+                            <th>Destination</th>
+                            <th>Latest Status</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <tr>
+                            <td>EACL</td>
+                            <td>47</td>
+                            <td>T461DZH</td>
+                            <td>DEOGRATIAS TADEUS TARIMO</td>
+                            <td><span class="badge-custom badge-export">EXPORT</span></td>
+                            <td>Tunduma</td>
+                            <td>Day 2 enroute to Likasi</td>
+                        </tr>
+                        <tr>
+                            <td>EACL</td>
+                            <td>97</td>
+                            <td>T446EFR</td>
+                            <td>GERALD JULIAS SEPELIUS</td>
+                            <td><span class="badge-custom badge-import">IMPORT</span></td>
+                            <td>Kitwe</td>
+                            <td>Day 5 loaded waiting release</td>
+                        </tr>
+                        <tr>
+                            <td>EACL</td>
+                            <td>98</td>
+                            <td>T149EES</td>
+                            <td>JOSEPH JACKSON KULINDWA</td>
+                            <td><span class="badge-custom badge-export">EXPORT</span></td>
+                            <td>Dar es Salaam</td>
+                            <td>Day 6 loaded waiting release</td>
+                        </tr>
+                    </tbody>
+                </table>
+            </div>
+        </div>
+    </div>
+
+    <!-- System Features Section -->
+    <div class="container mt-5 pt-5" id="features">
+        <div class="text-center mb-5 scroll-fade-in">
+            <h2 class="section-title">Recommended System Features</h2>
+            <p class="section-subtitle">Transform your data into actionable intelligence</p>
+        </div>
+
+        <div class="row g-4">
+            <div class="col-lg-4 col-md-6">
+                <div class="feature-card scroll-fade-in">
+                    <div class="feature-icon success">
+                        <i class="bi bi-geo-alt-fill"></i>
+                    </div>
+                    <h3 class="feature-title">Real-Time GPS Tracking</h3>
+                    <p class="feature-desc">
+                        Replace manual status updates with automated GPS tracking. Monitor fleet location in real-time on interactive maps, 
+                        reducing data entry errors and improving accuracy.
+                    </p>
+                </div>
+            </div>
+
+            <div class="col-lg-4 col-md-6">
+                <div class="feature-card scroll-fade-in">
+                    <div class="feature-icon info">
+                        <i class="bi bi-clock-history"></i>
+                    </div>
+                    <h3 class="feature-title">Automated Status Updates</h3>
+                    <p class="feature-desc">
+                        Eliminate manual daily reporting. Automatic geofencing triggers status changes when vehicles enter/exit 
+                        key locations like borders, loading zones, and destinations.
+                    </p>
+                </div>
+            </div>
+
+            <div class="col-lg-4 col-md-6">
+                <div class="feature-card scroll-fade-in">
+                    <div class="feature-icon warning">
+                        <i class="bi bi-exclamation-triangle-fill"></i>
+                    </div>
+                    <h3 class="feature-title">Smart Alerts & Notifications</h3>
+                    <p class="feature-desc">
+                        Proactive notifications for delays, route deviations, extended waiting times, and maintenance schedules. 
+                        Keep stakeholders informed automatically via SMS, email, or push notifications.
+                    </p>
+                </div>
+            </div>
+
+            <div class="col-lg-4 col-md-6">
+                <div class="feature-card scroll-fade-in">
+                    <div class="feature-icon success">
+                        <i class="bi bi-graph-up-arrow"></i>
+                    </div>
+                    <h3 class="feature-title">Analytics Dashboard</h3>
+                    <p class="feature-desc">
+                        Visualize KPIs: average delivery time, distance traveled, fuel consumption, driver performance, 
+                        route efficiency, and border crossing times with interactive charts and reports.
+                    </p>
+                </div>
+            </div>
+
+            <div class="col-lg-4 col-md-6">
+                <div class="feature-card scroll-fade-in">
+                    <div class="feature-icon info">
+                        <i class="bi bi-calendar-check"></i>
+                    </div>
+                    <h3 class="feature-title">Route Planning & Optimization</h3>
+                    <p class="feature-desc">
+                        AI-powered route suggestions based on historical data, traffic patterns, border wait times, 
+                        and weather conditions to reduce delivery times and fuel costs.
+                    </p>
+                </div>
+            </div>
+
+            <div class="col-lg-4 col-md-6">
+                <div class="feature-card scroll-fade-in">
+                    <div class="feature-icon warning">
+                        <i class="bi bi-people-fill"></i>
+                    </div>
+                    <h3 class="feature-title">Driver & Vehicle Management</h3>
+                    <p class="feature-desc">
+                        Comprehensive profiles for drivers and vehicles including licenses, certifications, maintenance history, 
+                        performance metrics, and compliance documentation all in one place.
+                    </p>
+                </div>
+            </div>
+
+            <div class="col-lg-4 col-md-6">
+                <div class="feature-card scroll-fade-in">
+                    <div class="feature-icon success">
+                        <i class="bi bi-file-earmark-text"></i>
+                    </div>
+                    <h3 class="feature-title">Document Management</h3>
+                    <p class="feature-desc">
+                        Digitize and centralize all fleet documentation: shipping manifests, customs paperwork, 
+                        insurance certificates, and compliance documents with automated expiration reminders.
+                    </p>
+                </div>
+            </div>
+
+            <div class="col-lg-4 col-md-6">
+                <div class="feature-card scroll-fade-in">
+                    <div class="feature-icon info">
+                        <i class="bi bi-receipt"></i>
+                    </div>
+                    <h3 class="feature-title">Client Portal & Reporting</h3>
+                    <p class="feature-desc">
+                        Allow clients to track their shipments in real-time, access delivery confirmations, 
+                        view historical data, and download custom reports improving transparency and satisfaction.
+                    </p>
+                </div>
+            </div>
+
+            <div class="col-lg-4 col-md-6">
+                <div class="feature-card scroll-fade-in">
+                    <div class="feature-icon warning">
+                        <i class="bi bi-shield-check"></i>
+                    </div>
+                    <h3 class="feature-title">Compliance & Safety Management</h3>
+                    <p class="feature-desc">
+                        Track driver hours, rest periods, vehicle inspections, and regulatory compliance. 
+                        Generate audit reports and ensure adherence to cross-border transportation regulations.
+                    </p>
+                </div>
+            </div>
+
+            <!-- New GPS Manager Features -->
+            <div class="col-lg-4 col-md-6">
+                <div class="feature-card scroll-fade-in">
+                    <div class="feature-icon danger" style="background: linear-gradient(135deg, #ff416c 0%, #ff4b2b 100%); color: white;">
+                        <i class="bi bi-broadcast-pin"></i>
+                    </div>
+                    <h3 class="feature-title">GPS Command Center</h3>
+                    <p class="feature-desc">
+                        Direct vehicle control: <strong>Immobilize/Resume</strong> engine remotely, request instant location updates, 
+                        and enable voice monitoring for security incidents.
+                    </p>
+                </div>
+            </div>
+
+            <div class="col-lg-4 col-md-6">
+                <div class="feature-card scroll-fade-in">
+                    <div class="feature-icon info">
+                        <i class="bi bi-sim"></i>
+                    </div>
+                    <h3 class="feature-title">SIM Card Management</h3>
+                    <p class="feature-desc">
+                        Centralized inventory for all GPS SIMs. Automated <strong>Expiry Alerts</strong> to prevent connectivity loss, 
+                        usage tracking, and carrier management.
+                    </p>
+                </div>
+            </div>
+
+            <div class="col-lg-4 col-md-6">
+                <div class="feature-card scroll-fade-in">
+                    <div class="feature-icon success">
+                        <i class="bi bi-hdd-network"></i>
+                    </div>
+                    <h3 class="feature-title">Device Health Monitoring</h3>
+                    <p class="feature-desc">
+                        Real-time status of GPS units. Monitor battery levels, signal strength, and connection status. 
+                        Detect tampering or device failures instantly.
+                    </p>
+                </div>
+            </div>
+
+    <!-- Data Visualization Mockup -->
+    <div class="container mt-5 pt-5">
+        <div class="text-center mb-5 scroll-fade-in">
+            <h2 class="section-title">Data Visualization Capabilities</h2>
+            <p class="section-subtitle">Turn data into insights with powerful visualizations</p>
+        </div>
+
+        <div class="row g-4">
+            <div class="col-lg-6">
+                <div class="chart-placeholder scroll-fade-in">
+                    <div class="chart-content">
+                        <i class="bi bi-bar-chart-fill chart-icon"></i>
+                        <h4 class="text-white">Fleet Performance Analytics</h4>
+                        <p class="text-muted">Import vs Export trends, daily operations metrics</p>
+                    </div>
+                </div>
+            </div>
+            <div class="col-lg-6">
+                <div class="chart-placeholder scroll-fade-in">
+                    <div class="chart-content">
+                        <i class="bi bi-pie-chart-fill chart-icon"></i>
+                        <h4 class="text-white">Route Distribution</h4>
+                        <p class="text-muted">Destination breakdown and frequency analysis</p>
+                    </div>
+                </div>
+            </div>
+            <div class="col-lg-6">
+                <div class="chart-placeholder scroll-fade-in">
+                    <div class="chart-content">
+                        <i class="bi bi-graph-up chart-icon"></i>
+                        <h4 class="text-white">Delivery Timeline Trends</h4>
+                        <p class="text-muted">Average transit time by route and seasonal patterns</p>
+                    </div>
+                </div>
+            </div>
+            <div class="col-lg-6">
+                <div class="chart-placeholder scroll-fade-in">
+                    <div class="chart-content">
+                        <i class="bi bi-speedometer2 chart-icon"></i>
+                        <h4 class="text-white">Driver Performance Metrics</h4>
+                        <p class="text-muted">On-time delivery rates, efficiency scores</p>
+                    </div>
+                </div>
+            </div>
+            
+            <!-- Command Center Visual -->
+            <div class="col-12">
+                <div class="chart-placeholder scroll-fade-in" style="background: linear-gradient(135deg, rgba(255, 65, 108, 0.1) 0%, rgba(255, 75, 43, 0.1) 100%); border-color: rgba(255, 65, 108, 0.3);">
+                    <div class="chart-content">
+                        <i class="bi bi-broadcast chart-icon" style="background: linear-gradient(135deg, #ff416c 0%, #ff4b2b 100%); -webkit-background-clip: text; background-clip: text;"></i>
+                        <h4 class="text-white">Live Command Center</h4>
+                        <p class="text-muted">Real-time vehicle control interface with map integration</p>
+                        <div class="mt-3">
+                            <span class="badge bg-danger me-2">Immobilize</span>
+                            <span class="badge bg-success me-2">Resume</span>
+                            <span class="badge bg-info">Locate</span>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Recommendations Section -->
+    <div class="container mt-5 pt-5" id="recommendations">
+        <div class="text-center mb-5 scroll-fade-in">
+            <h2 class="section-title">Strategic Recommendations</h2>
+            <p class="section-subtitle">Actionable steps to streamline and improve operations</p>
+        </div>
+
+        <div class="recommendation-card high-priority scroll-fade-in">
+            <div class="d-flex align-items-start">
+                <div class="me-3">
+                    <span class="priority-badge priority-high">Critical</span>
+                </div>
+                <div class="flex-grow-1">
+                    <h4 class="text-white mb-3">
+                        <i class="bi bi-lightning-charge-fill me-2"></i>
+                        Digitize and Automate Data Collection
+                    </h4>
+                    <p class="text-light mb-3">
+                        <strong>Current Issue:</strong> Manual data entry into CSV files is time-consuming, error-prone, 
+                        and limits real-time visibility.
+                    </p>
+                    <p class="feature-desc mb-3">
+                        <strong>Solution:</strong> Implement a web-based fleet management system with mobile apps for drivers. 
+                        Use GPS trackers and IoT sensors for automatic position updates, eliminating the need for manual reporting.
+                    </p>
+                    <p class="feature-desc">
+                        <strong>Expected Benefits:</strong> 90% reduction in data entry time, real-time tracking visibility, 
+                        improved accuracy, instant alerts for exceptions.
+                    </p>
+                </div>
+            </div>
+        </div>
+
+        <div class="recommendation-card medium-priority scroll-fade-in">
+            <div class="d-flex align-items-start">
+                <div class="me-3">
+                    <span class="priority-badge priority-medium">High Priority</span>
+                </div>
+                <div class="flex-grow-1">
+                    <h4 class="text-white mb-3">
+                        <i class="bi bi-clock-fill me-2"></i>
+                        Reduce Border & Loading Delays
+                    </h4>
+                    <p class="text-light mb-3">
+                        <strong>Current Issue:</strong> Data shows vehicles "waiting for release" for 5-6 days, indicating 
+                        significant idle time and inefficiency.
+                    </p>
+                    <p class="feature-desc mb-3">
+                        <strong>Solution:</strong> Implement predictive analytics to identify delay patterns. Create automated 
+                        alerts when wait times exceed thresholds. Develop pre-clearance workflows and document digitization 
+                        to expedite customs processing.
+                    </p>
+                    <p class="feature-desc">
+                        <strong>Expected Benefits:</strong> 30-40% reduction in wait times, improved asset utilization, 
+                        higher customer satisfaction, better cash flow.
+                    </p>
+                </div>
+            </div>
+        </div>
+
+        <div class="recommendation-card medium-priority scroll-fade-in">
+            <div class="d-flex align-items-start">
+                <div class="me-3">
+                    <span class="priority-badge priority-medium">High Priority</span>
+                </div>
+                <div class="flex-grow-1">
+                    <h4 class="text-white mb-3">
+                        <i class="bi bi-gear-fill me-2"></i>
+                        Implement Predictive Maintenance
+                    </h4>
+                    <p class="text-light mb-3">
+                        <strong>Current Issue:</strong> No visibility into vehicle maintenance schedules or condition, 
+                        risking breakdowns during critical deliveries.
+                    </p>
+                    <p class="feature-desc mb-3">
+                        <strong>Solution:</strong> Track mileage, engine hours, and service history for each vehicle. 
+                        Set up automated maintenance reminders based on usage patterns. Use telematics data to predict 
+                        potential failures before they occur.
+                    </p>
+                    <p class="feature-desc">
+                        <strong>Expected Benefits:</strong> Reduced breakdown incidents, lower repair costs, extended vehicle lifespan, 
+                        improved safety and compliance.
+                    </p>
+                </div>
+            </div>
+        </div>
+
+        <div class="recommendation-card info-priority scroll-fade-in">
+            <div class="d-flex align-items-start">
+                <div class="me-3">
+                    <span class="priority-badge priority-info">Medium Priority</span>
+                </div>
+                <div class="flex-grow-1">
+                    <h4 class="text-white mb-3">
+                        <i class="bi bi-people-fill me-2"></i>
+                        Enhance Client Communication & Transparency
+                    </h4>
+                    <p class="text-light mb-3">
+                        <strong>Current Issue:</strong> Clients likely have limited visibility into shipment status, 
+                        requiring manual status updates and phone calls.
+                    </p>
+                    <p class="feature-desc mb-3">
+                        <strong>Solution:</strong> Create a client portal where customers can track shipments in real-time, 
+                        receive automated notifications at key milestones (loading, border crossing, delivery), 
+                        and access delivery confirmations and documentation.
+                    </p>
+                    <p class="feature-desc">
+                        <strong>Expected Benefits:</strong> Reduced customer service workload, improved client satisfaction 
+                        and retention, competitive differentiation, reduced inquiry calls by 60-70%.
+                    </p>
+                </div>
+            </div>
+        </div>
+
+        <div class="recommendation-card info-priority scroll-fade-in">
+            <div class="d-flex align-items-start">
+                <div class="me-3">
+                    <span class="priority-badge priority-info">Medium Priority</span>
+                </div>
+                <div class="flex-grow-1">
+                    <h4 class="text-white mb-3">
+                        <i class="bi bi-bar-chart-line-fill me-2"></i>
+                        Leverage Data Analytics for Optimization
+                    </h4>
+                    <p class="text-light mb-3">
+                        <strong>Current Issue:</strong> Rich historical data exists but is locked in spreadsheets, 
+                        preventing pattern analysis and optimization.
+                    </p>
+                    <p class="feature-desc mb-3">
+                        <strong>Solution:</strong> Build analytics dashboards showing KPIs: average delivery times by route, 
+                        border crossing durations, driver performance, seasonal trends, cost per mile/kilometer, 
+                        and vehicle utilization rates.
+                    </p>
+                    <p class="feature-desc">
+                        <strong>Expected Benefits:</strong> Data-driven decision making, route optimization saving 10-15% on fuel, 
+                        better resource allocation, identification of top-performing drivers and vehicles.
+                    </p>
+                </div>
+            </div>
+        </div>
+
+        <div class="recommendation-card info-priority scroll-fade-in">
+            <div class="d-flex align-items-start">
+                <div class="me-3">
+                    <span class="priority-badge priority-info">Standard Priority</span>
+                </div>
+                <div class="flex-grow-1">
+                    <h4 class="text-white mb-3">
+                        <i class="bi bi-phone-fill me-2"></i>
+                        Mobile-First Driver Application
+                    </h4>
+                    <p class="text-light mb-3">
+                        <strong>Current Issue:</strong> Drivers may not have easy tools to update status, access route information, 
+                        or report issues while on the road.
+                    </p>
+                    <p class="feature-desc mb-3">
+                        <strong>Solution:</strong> Develop a mobile app for drivers to log activities, upload photos 
+                        (loading/unloading proof), access navigation, communicate with dispatch, and submit expense reports. 
+                        Works offline with sync when connected.
+                    </p>
+                    <p class="feature-desc">
+                        <strong>Expected Benefits:</strong> Improved driver satisfaction, real-time communication, 
+                        better data quality, reduced paperwork, enhanced accountability.
+                    </p>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Implementation Roadmap -->
+    <div class="container mt-5 pt-5">
+        <div class="text-center mb-5 scroll-fade-in">
+            <h2 class="section-title">Implementation Roadmap</h2>
+            <p class="section-subtitle">Phased approach to digital transformation</p>
+        </div>
+
+        <div class="row g-4">
+            <div class="col-lg-4">
+                <div class="feature-card scroll-fade-in">
+                    <div class="d-flex align-items-center mb-3">
+                        <div class="feature-icon success me-3" style="width: 50px; height: 50px; font-size: 1.5rem;">
+                            <span>1</span>
+                        </div>
+                        <h4 class="text-white mb-0">Phase 1: Foundation</h4>
+                    </div>
+                    <p class="text-muted mb-3"><strong>Timeline:</strong> 2-3 months</p>
+                    <ul class="list-custom">
+                        <li>Database design & setup</li>
+                        <li>Core web application development</li>
+                        <li>User authentication & roles</li>
+                        <li>Basic fleet tracking interface</li>
+                        <li>CSV data migration</li>
+                    </ul>
+                </div>
+            </div>
+
+            <div class="col-lg-4">
+                <div class="feature-card scroll-fade-in">
+                    <div class="d-flex align-items-center mb-3">
+                        <div class="feature-icon info me-3" style="width: 50px; height: 50px; font-size: 1.5rem;">
+                            <span>2</span>
+                        </div>
+                        <h4 class="text-white mb-0">Phase 2: Automation</h4>
+                    </div>
+                    <p class="text-muted mb-3"><strong>Timeline:</strong> 3-4 months</p>
+                    <ul class="list-custom">
+                        <li>GPS integration & real-time tracking</li>
+                        <li>Mobile app for drivers</li>
+                        <li>Automated alerts & notifications</li>
+                        <li>Document management system</li>
+                        <li>Basic analytics dashboard</li>
+                    </ul>
+                </div>
+            </div>
+
+            <div class="col-lg-4">
+                <div class="feature-card scroll-fade-in">
+                    <div class="d-flex align-items-center mb-3">
+                        <div class="feature-icon warning me-3" style="width: 50px; height: 50px; font-size: 1.5rem;">
+                            <span>3</span>
+                        </div>
+                        <h4 class="text-white mb-0">Phase 3: Intelligence</h4>
+                    </div>
+                    <p class="text-muted mb-3"><strong>Timeline:</strong> 3-4 months</p>
+                    <ul class="list-custom">
+                        <li>Advanced analytics & reporting</li>
+                        <li>Route optimization AI</li>
+                        <li>Client portal & API</li>
+                        <li>Predictive maintenance</li>
+                        <li>Compliance automation</li>
+                    </ul>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Call to Action -->
+    <div class="container mt-5 pt-5 mb-5 pb-5">
+        <div class="text-center scroll-fade-in">
+            <div class="feature-card" style="max-width: 800px; margin: 0 auto; padding: 50px;">
+                <h2 class="text-white mb-4">Ready to Transform Your Fleet Operations?</h2>
+                <p class="feature-desc mb-4" style="font-size: 1.1rem;">
+                    Your current data holds tremendous potential. Let's build a system that turns this information 
+                    into competitive advantage, operational efficiency, and happier clients.
+                </p>
+                <div class="d-flex gap-3 justify-content-center flex-wrap">
+                    <button class="btn btn-primary-gradient btn-custom">
+                        <i class="bi bi-rocket-takeoff me-2"></i>Start Implementation
+                    </button>
+                    <button class="btn btn-success-gradient btn-custom">
+                        <i class="bi bi-calendar-check me-2"></i>Schedule Demo
+                    </button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Footer -->
+    <footer class="footer">
+        <div class="container text-center">
+            <p class="text-muted mb-2">
+                <i class="bi bi-person-check-fill me-2"></i>
+                Prepared by - David Mushi, tech@overland.co.tz
+            </p>
+            <p class="text-muted mb-0" style="font-size: 0.9rem;">
+                Data Analysis &amp; System Recommendations • Generated <span id="current-date"></span>
+            </p>
+        </div>
+    </footer>
+
+    <!-- Bootstrap 5 JS Bundle -->
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/js/bootstrap.bundle.min.js"></script>
+    
+    <!-- Custom JavaScript for Animations -->
+    <script>
+        // Set current date
+        const dateOptions = { weekday: 'long', year: 'numeric', month: 'long', day: 'numeric' };
+        document.getElementById('current-date').textContent = new Date().toLocaleDateString('en-US', dateOptions);
+
+        // Scroll-triggered animations
+        const observerOptions = {
+            threshold: 0.1,
+            rootMargin: '0px 0px -50px 0px'
+        };
+
+        const observer = new IntersectionObserver((entries) => {
+            entries.forEach(entry => {
+                if (entry.isIntersecting) {
+                    entry.target.classList.add('visible');
+                }
+            });
+        }, observerOptions);
+
+        document.querySelectorAll('.scroll-fade-in').forEach(el => {
+            observer.observe(el);
+        });
+
+        // Smooth scrolling for navigation
+        document.querySelectorAll('a[href^="#"]').forEach(anchor => {
+            anchor.addEventListener('click', function (e) {
+                e.preventDefault();
+                const target = document.querySelector(this.getAttribute('href'));
+                if (target) {
+                    target.scrollIntoView({
+                        behavior: 'smooth',
+                        block: 'start'
+                    });
+                }
+            });
+        });
+
+        // Add navbar background on scroll
+        window.addEventListener('scroll', () => {
+            const navbar = document.querySelector('.navbar');
+            if (window.scrollY > 50) {
+                navbar.style.background = 'rgba(26, 26, 46, 0.98)';
+            } else {
+                navbar.style.background = 'rgba(26, 26, 46, 0.95)';
+            }
+        });
+    </script>
+</body>
+</html>
